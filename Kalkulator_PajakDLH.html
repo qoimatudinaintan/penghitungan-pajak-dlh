@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Kalkulator Pajak - DLH Tangsel</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+        background: linear-gradient(135deg, #01eefb 0%, #c502fb 50%, #f35ec9 100%);
+        padding: 32px;
+        min-height: 100vh;
+        font-weight: 400;
+      }
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 14px;
+        padding: 18px;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      }
+
+      .header {
+        background: #eff6ff;
+        border-left: 4px solid #059694;
+        padding: 18px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 18px;
+        text-align: center;
+      }
+      .header-icon {
+        background: #059694;
+        padding: 10px;
+        border-radius: 8px;
+        color: white;
+        font-size: 20px;
+      }
+      .header-text {
+        text-align: center;
+      }
+
+      .header-text h1 {
+        font-size: 20px;
+        color: #1f2937;
+        font-weight: 700;
+      }
+      .header-text p {
+        color: #6b7280;
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .card {
+        background: white;
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+      }
+
+      .card-title {
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 12px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .form-group {
+        margin-bottom: 14px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #374151;
+        font-weight: 600;
+        font-size: 14px;
+      }
+      input[type='text'],
+      select {
+        width: 100%;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1px solid #e6e6e6;
+        font-size: 14px;
+      }
+      input[type='text']:focus,
+      select:focus {
+        outline: none;
+        border-color: #059669;
+        box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.06);
+      }
+
+      .button-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 12px;
+      }
+      .btn {
+        padding: 12px 18px;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        border: none;
+      }
+      .btn-primary {
+        background: #059694;
+        color: white;
+        flex: 1;
+      }
+      .btn-secondary {
+        background: #e5e7eb;
+        color: #374151;
+        width: 56px;
+      }
+
+      .toggle-button-group {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+      .toggle-button {
+        position: relative;
+        background: white;
+        border: 2px solid #d1d5db;
+        border-radius: 50px;
+        padding: 12px 22px;
+        cursor: pointer;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        font-weight: 700;
+        transition: all 0.18s ease;
+      }
+      .toggle-button:hover {
+        transform: translateY(-2px);
+        border-color: #059669;
+        background: #f0fdf4;
+      }
+      .toggle-button input[type='radio'] {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .toggle-button.active {
+        background: #059669;
+        border-color: #059669;
+        color: white;
+        box-shadow: 0 8px 18px rgba(5, 150, 105, 0.18);
+      }
+      .toggle-icon {
+        font-size: 20px;
+        line-height: 1;
+      }
+
+      .result-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+        margin-top: 12px;
+      }
+      .result-box {
+        background: #fff;
+        border-radius: 12px;
+        padding: 12px;
+        border: 1px solid #eaeaea;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+      }
+      .result-box .label {
+        font-size: 12px;
+        color: #6b7280;
+        font-weight: 600;
+      }
+      .result-box .value {
+        font-weight: 500;
+        margin-top: 6px;
+        font-size: 15px;
+        color: #1f2937;
+      }
+
+      .result-box.blue {
+        background: #eff6ff;
+        border-color: #bfdbfe;
+      }
+      .result-box.orange {
+        background: #fff7ed;
+        border-color: #fed7aa;
+      }
+      .result-box.purple {
+        background: #faf5ff;
+        border-color: #e9d5ff;
+      }
+
+      .breakdown-section {
+        margin-top: 14px;
+        padding: 12px;
+        background: #f9fafb;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+      }
+      .breakdown-title {
+        font-weight: 700;
+        color: #374151;
+        margin-bottom: 8px;
+      }
+
+      .result-highlight {
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 10px;
+        color: white;
+        font-weight: 700;
+        text-align: center;
+        background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        box-shadow: 0 6px 14px rgba(5, 150, 105, 0.18);
+      }
+      .result-highlight.blue {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        box-shadow: 0 6px 14px rgba(59, 130, 246, 0.18);
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @media (max-width: 920px) {
+        .main-content {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="header-icon">🧮</div>
+        <div class="header-text">
+          <h1>Kalkulator Pajak</h1>
+          <p>Dinas Lingkungan Hidup Tangerang Selatan</p>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <!-- LEFT: FORM -->
+        <div class="card">
+          <div class="card-title">📝 Form Input Pajak</div>
+
+          <form id="taxForm">
+            <!-- Keterangan -->
+            <div class="form-group">
+              <label for="keterangan">Keterangan</label>
+              <select id="keterangan" required>
+                <option value="">-- Pilih Keterangan --</option>
+                <option value="Makan Minum">Makan Minum</option>
+                <option value="ATK">ATK</option>
+                <option value="Nilai Honorarium">Nilai Honorarium</option>
+                <option value="Konsultan">Konsultan</option>
+              </select>
+            </div>
+
+            <!-- Jenis makan -->
+            <div class="form-group hidden" id="jenisMakanGroup">
+              <label>Jenis Makan Minum</label>
+              <div class="toggle-button-group">
+                <label class="toggle-button" id="btnNasiKotak">
+                  <input type="radio" name="jenisMakan" value="Nasi Kotak" />
+                  <span class="toggle-icon">🍱</span>
+                  <span class="toggle-text">Nasi Kotak</span>
+                </label>
+                <label class="toggle-button" id="btnPrasmanan">
+                  <input type="radio" name="jenisMakan" value="Prasmanan" />
+                  <span class="toggle-icon">🍽️</span>
+                  <span class="toggle-text">Prasmanan</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Nilai Belanja -->
+            <div class="form-group">
+              <label for="nilaiBelanja">Nilai Belanja</label>
+              <input type="text" id="nilaiBelanja" placeholder="Masukkan nilai dalam Rupiah" required />
+            </div>
+
+            <!-- Pengenaan Pajak -->
+            <div class="form-group">
+              <label for="pengenaanPajak">Pengenaan Pajak</label>
+              <select id="pengenaanPajak" required>
+                <option value="">-- Pilih Pengenaan Pajak --</option>
+                <option value="Pajak Daerah">Pajak Daerah</option>
+                <option value="PPN">PPN (11%)</option>
+                <option value="PPh 21">PPh 21 (Honorarium)</option>
+                <option value="PPh 22">PPh 22</option>
+                <option value="PPh 23">PPh 23</option>
+              </select>
+            </div>
+
+            <!-- Kategori NPWP -->
+            <div class="form-group hidden" id="kategoriGroup">
+              <label>Kategori</label>
+              <div style="display: flex; gap: 18px; align-items: center">
+                <label style="font-weight: 600"><input type="radio" name="kategori" value="NPWP" /> Ada NPWP</label>
+                <label style="font-weight: 600"><input type="radio" name="kategori" value="TIDAK_NPWP" /> Tidak Ada NPWP</label>
+              </div>
+            </div>
+
+            <!-- Golongan -->
+            <div class="form-group hidden" id="golonganGroup">
+              <label>Golongan Pegawai</label>
+              <div style="display: flex; gap: 18px; align-items: center">
+                <label style="font-weight: 600"><input type="radio" name="golongan" value="3" /> Golongan III (5%)</label>
+                <label style="font-weight: 600"><input type="radio" name="golongan" value="4" /> Golongan IV (15%)</label>
+              </div>
+            </div>
+
+            <div class="button-group">
+              <button type="submit" class="btn btn-primary">🧮 Hitung Pajak</button>
+              <button type="button" class="btn btn-secondary" onclick="resetForm()">🗑️</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- RIGHT: RESULT -->
+        <div class="card">
+          <div class="card-title">💾 Hasil Perhitungan</div>
+
+          <div id="resultEmpty" style="text-align: center; padding: 36px; color: #9ca3af">
+            <div style="font-size: 44px">🧮</div>
+            <p>Silakan isi form dan klik "Hitung Pajak"</p>
+          </div>
+
+          <div id="resultContent" class="hidden"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ===== helpers =====
+      const el = (id) => document.getElementById(id);
+
+      // === PEMBULATAN STANDAR KE KELIPATAN 10 ===
+      // Jika digit satuan < 5 → bulatkan ke bawah
+      // Jika digit satuan >= 5 → bulatkan ke atas
+      function roundToNearest10(value) {
+        if (!isFinite(value)) return value;
+        // Ambil digit satuan
+        const onesDigit = Math.abs(value) % 10;
+
+        if (onesDigit < 5) {
+          // Bulatkan ke bawah (hapus digit satuan)
+          return Math.floor(value / 10) * 10;
+        } else {
+          // Bulatkan ke atas
+          return Math.ceil(value / 10) * 10;
+        }
+      }
+
+      function toNumberOnly(str) {
+        if (!str) return 0;
+        return parseFloat(str.replace(/[^\d]/g, '')) || 0;
+      }
+
+      function formatRupiahNumber(x) {
+        if (isNaN(x)) x = 0;
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(Math.round(x));
+      }
+
+      // ===== elements =====
+      const keteranganSelect = el('keterangan');
+      const jenisMakanGroup = el('jenisMakanGroup');
+      const pengenaanSelect = el('pengenaanPajak');
+      const kategoriGroup = el('kategoriGroup');
+      const golonganGroup = el('golonganGroup');
+      const inputNilai = el('nilaiBelanja');
+
+      const resultEmpty = el('resultEmpty');
+      const resultContent = el('resultContent');
+
+      // referensi mapping
+      const referensiPajak = {
+        'Makan Minum': { pengenaan: ['Pajak Daerah', 'PPh 22/23'] },
+        ATK: { pengenaan: ['PPN (jika ≥ 2.000.000)', 'PPh 22 (jika ≥ 2.000.000)'] },
+        'Nilai Honorarium': { pengenaan: ['PPh 21'] },
+        Konsultan: { pengenaan: ['PPN', 'PPh 23'] },
+      };
+
+      // ===== tampilan input rupiah (real-time) =====
+      inputNilai.addEventListener('input', function () {
+        let val = this.value.replace(/[^\d]/g, '');
+        if (val) {
+          this.value = 'Rp ' + val.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        } else {
+          this.value = '';
+        }
+      });
+
+      // ===== Event change untuk keterangan =====
+      keteranganSelect.addEventListener('change', function () {
+        const selected = this.value;
+
+        jenisMakanGroup.classList.add('hidden');
+        kategoriGroup.classList.add('hidden');
+        golonganGroup.classList.add('hidden');
+
+        document.querySelectorAll('#jenisMakanGroup input[type="radio"]').forEach((r) => (r.checked = false));
+        document.querySelectorAll('#jenisMakanGroup .toggle-button').forEach((b) => b.classList.remove('active'));
+
+        const data = referensiPajak[selected];
+        if (data && Array.isArray(data.pengenaan)) {
+          const combined = data.pengenaan.join(', ');
+          pengenaanSelect.innerHTML = `<option value="${combined}" selected>${combined}</option>`;
+        } else {
+          pengenaanSelect.innerHTML = `
+            <option value="">-- Pilih Pengenaan Pajak --</option>
+            <option value="Pajak Daerah">Pajak Daerah</option>
+            <option value="PPN">PPN (11%)</option>
+            <option value="PPh 21">PPh 21 (Honorarium)</option>
+            <option value="PPh 22">PPh 22</option>
+            <option value="PPh 23">PPh 23</option>
+          `;
+        }
+
+        if (selected === 'Makan Minum') {
+          jenisMakanGroup.classList.remove('hidden');
+        } else if (selected === 'Nilai Honorarium') {
+          golonganGroup.classList.remove('hidden');
+        }
+      });
+
+      // ===== jenis makan toggle buttons =====
+      document.querySelectorAll('#jenisMakanGroup .toggle-button').forEach((btn) => {
+        btn.addEventListener('click', function () {
+          const radio = this.querySelector('input[type="radio"]');
+          if (!radio) return;
+          radio.checked = true;
+          document.querySelectorAll('#jenisMakanGroup .toggle-button').forEach((b) => b.classList.remove('active'));
+          this.classList.add('active');
+
+          const jenis = radio.value;
+          if (jenis === 'Nasi Kotak') {
+            pengenaanSelect.innerHTML = `<option value="Pajak Daerah, PPh 22" selected>Pajak Daerah, PPh 22</option>`;
+            kategoriGroup.classList.remove('hidden');
+            golonganGroup.classList.add('hidden');
+          } else if (jenis === 'Prasmanan') {
+            pengenaanSelect.innerHTML = `<option value="Pajak Daerah, PPh 23" selected>Pajak Daerah, PPh 23</option>`;
+            kategoriGroup.classList.remove('hidden');
+            golonganGroup.classList.add('hidden');
+          }
+        });
+      });
+
+      pengenaanSelect.addEventListener('change', function () {
+        const v = this.value;
+        kategoriGroup.classList.add('hidden');
+        golonganGroup.classList.add('hidden');
+
+        if (v.includes('PPh 22') || v.includes('PPh 23')) {
+          kategoriGroup.classList.remove('hidden');
+        }
+        if (v.includes('PPh 21')) {
+          golonganGroup.classList.remove('hidden');
+        }
+      });
+
+      // ===== Form submit =====
+      el('taxForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        calculateTax();
+      });
+
+      function calculateTax() {
+        const keterangan = keteranganSelect.value;
+        if (!keterangan) {
+          alert('Pilih keterangan terlebih dahulu.');
+          return;
+        }
+
+        const rawVal = inputNilai.value;
+        const nilai = toNumberOnly(rawVal);
+        if (!nilai || nilai <= 0) {
+          alert('Masukkan nilai belanja yang valid.');
+          return;
+        }
+
+        let ppn = 0;
+        let pph = 0;
+        let pajakDaerah = 0;
+        let detail = [];
+        let totalPajak = 0;
+        let showNilaiDiterima = false;
+
+        const kategori = document.querySelector('input[name="kategori"]:checked')?.value || null;
+        const golongan = document.querySelector('input[name="golongan"]:checked')?.value || null;
+
+        // === Hitung komponen pajak (belum dibulatkan) ===
+        let dppValue = 0;
+        if (keterangan === 'ATK') {
+          if (nilai >= 2000000) {
+            dppValue = (100 / 111) * nilai;
+
+            ppn = dppValue * 0.11;
+            const tarifPPh22 = 1.5;
+            pph = dppValue * (tarifPPh22 / 100);
+
+            detail.push({ label: 'PPN 11%', value: ppn });
+            detail.push({
+              label: `PPh 22 (${tarifPPh22}%)`,
+              value: pph,
+            });
+
+            showNilaiDiterima = true;
+          } else {
+            detail.push({ label: 'Bebas Pajak (ATK < Rp 2.000.000)', value: 0 });
+            showNilaiDiterima = true;
+          }
+        } else if (keterangan === 'Makan Minum') {
+          const jenis = document.querySelector('input[name="jenisMakan"]:checked')?.value || null;
+          if (!jenis) {
+            alert('Mohon pilih jenis Makan Minum (Nasi Kotak / Prasmanan).');
+            return;
+          }
+
+          pajakDaerah = nilai * 0.1;
+
+          if (jenis === 'Nasi Kotak') {
+            const tarifPPh22 = kategori === 'TIDAK_NPWP' ? 3 : 1.5;
+            pph = nilai * (tarifPPh22 / 100);
+
+            detail.push({ label: 'Pajak Daerah 10%', value: pajakDaerah });
+            detail.push({ label: `PPh 22 (${tarifPPh22}%)`, value: pph, info: kategori === 'TIDAK_NPWP' ? 'Tanpa NPWP' : 'Dengan NPWP' });
+
+            showNilaiDiterima = true;
+          } else {
+            const tarifPPh23 = kategori === 'TIDAK_NPWP' ? 4 : 2;
+            pph = nilai * (tarifPPh23 / 100);
+
+            detail.push({ label: 'Pajak Daerah 10%', value: pajakDaerah });
+            detail.push({ label: `PPh 23 (${tarifPPh23}%)`, value: pph, info: kategori === 'TIDAK_NPWP' ? 'Tanpa NPWP' : 'Dengan NPWP' });
+
+            showNilaiDiterima = true;
+          }
+        } else if (keterangan === 'Nilai Honorarium') {
+          if (!golongan) {
+            alert('Pilih golongan pegawai (III/IV).');
+            return;
+          }
+          const tarif = golongan === '4' ? 15 : 5;
+          pph = nilai * (tarif / 100);
+
+          detail.push({ label: `PPh 21 (${tarif}%)`, value: pph, info: `Golongan ${golongan === '4' ? 'IV' : 'III'}` });
+          showNilaiDiterima = true;
+        } else if (keterangan === 'Konsultan') {
+          dppValue = (100 / 111) * nilai;
+
+          ppn = dppValue * 0.11;
+          const tarifPPh23 = 2;
+          pph = dppValue * (tarifPPh23 / 100);
+
+          detail.push({ label: 'PPN 11%', value: ppn });
+          detail.push({ label: `PPh 23 (${tarifPPh23}%)`, value: pph });
+
+          showNilaiDiterima = true;
+        } else {
+          alert('Tipe keterangan tidak dikenali.');
+          return;
+        }
+
+        // === TERAPKAN PEMBULATAN KE KELIPATAN 10 untuk setiap komponen ===
+        detail = detail.map((item) => {
+          const roundedVal = roundToNearest10(item.value);
+          return { ...item, value: roundedVal };
+        });
+
+        // Total pajak = jumlah komponen yang sudah dibulatkan
+        totalPajak = detail.reduce((s, it) => s + (isFinite(it.value) ? it.value : 0), 0);
+
+        // Nilai setelah pajak = nilai - totalPajak, lalu dibulatkan juga
+        const diterimaBeforeRound = nilai - totalPajak;
+        const diterimaRounded = roundToNearest10(diterimaBeforeRound);
+
+        displayResult({
+          keterangan,
+          nilai,
+          detail,
+          totalPajak,
+          diterima: diterimaRounded,
+          showNilaiDiterima,
+          dpp: dppValue > 0 ? dppValue : null,
+        });
+      }
+
+      // ===== render result =====
+      function displayResult(data) {
+        resultEmpty.classList.add('hidden');
+        resultContent.classList.remove('hidden');
+
+        let breakdownHTML = '';
+        data.detail.forEach((item) => {
+          const cls = item.label.toLowerCase().includes('ppn') ? 'blue' : item.label.toLowerCase().includes('pph') ? 'purple' : 'orange';
+          breakdownHTML += `
+      <div class="result-box ${cls}">
+        <div class="label">${item.label}</div>
+        <div class="value">${formatRupiahNumber(item.value)}</div>
+        ${item.info ? `<div style="margin-top:8px; display:inline-block; padding:4px 8px; background:#eef2ff; border-radius:10px; font-size:12px;">${item.info}</div>` : ''}
+      </div>
+    `;
+        });
+
+        resultContent.innerHTML = `
+    <div class="result-box">
+      <div class="label">Keterangan</div>
+      <div class="value">${data.keterangan}</div>
+    </div>
+
+    <div class="result-grid" style="margin-top:10px;">
+      <div class="result-box blue">
+        <div class="label">Nilai Belanja</div>
+        <div class="value">${formatRupiahNumber(data.nilai)}</div>
+      </div>
+      ${
+        data.dpp
+          ? `
+      <div class="result-box orange">
+        <div class="label">DPP (Dasar Pengenaan Pajak)</div>
+        <div class="value">${formatRupiahNumber(data.dpp)}</div>
+      </div>
+      `
+          : ''
+      }
+    </div>
+
+    <div class="breakdown-section">
+      <div class="breakdown-title">Breakdown Pajak</div>
+      <div class="result-grid">
+        ${breakdownHTML}
+      </div>
+    </div>
+
+    <div class="result-highlight" style="margin-top:12px;">
+      <div style="font-size:13px; opacity:0.9;">Total Pajak</div>
+      <div style="font-size:20px; margin-top:6px;">${formatRupiahNumber(data.totalPajak)}</div>
+    </div>
+
+    ${
+      data.showNilaiDiterima
+        ? `
+      <div class="result-highlight blue" style="margin-top:12px;">
+        <div style="font-size:13px; opacity:0.9;">Nilai Setelah Pajak</div>
+        <div style="font-size:20px; margin-top:6px;">${formatRupiahNumber(data.diterima)}</div>
+      </div>
+    `
+        : ''
+    }
+  `;
+      }
+
+      // ===== reset form =====
+      function resetForm() {
+        try {
+          const form = el('taxForm');
+          if (form) form.reset();
+
+          if (inputNilai) inputNilai.value = '';
+
+          if (jenisMakanGroup) jenisMakanGroup.classList.add('hidden');
+          if (kategoriGroup) kategoriGroup.classList.add('hidden');
+          if (golonganGroup) golonganGroup.classList.add('hidden');
+
+          document.querySelectorAll('#jenisMakanGroup .toggle-button').forEach((b) => b.classList.remove('active'));
+
+          const peng = el('pengenaanPajak');
+          if (peng) {
+            peng.innerHTML = `
+              <option value="">-- Pilih Pengenaan Pajak --</option>
+              <option value="Pajak Daerah">Pajak Daerah</option>
+              <option value="PPN">PPN (11%)</option>
+              <option value="PPh 21">PPh 21 (Honorarium)</option>
+              <option value="PPh 22">PPh 22</option>
+              <option value="PPh 23">PPh 23</option>
+            `;
+          }
+
+          if (resultEmpty) resultEmpty.classList.remove('hidden');
+          if (resultContent) {
+            resultContent.classList.add('hidden');
+            resultContent.innerHTML = '';
+          }
+        } catch (err) {
+          console.error('resetForm error:', err);
+          if (resultEmpty) resultEmpty.classList.remove('hidden');
+          if (resultContent) resultContent.classList.add('hidden');
+        }
+      }
+
+      window.addEventListener('error', (e) => {
+        console.error('Global error:', e.error || e.message);
+      });
+    </script>
+  </body>
+</html>
